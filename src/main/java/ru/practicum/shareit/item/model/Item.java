@@ -9,17 +9,13 @@ import javax.validation.constraints.NotNull;
 @Data
 @Builder
 public class Item {
-    @Builder.Default
-    private Long id = 1L;
-    @NotNull
+    private Long id;
     @NotBlank
     private String name;
-    @NotNull
     @NotBlank
     private String description;
     @NotNull
     private Boolean available;
-
     @NotNull
     private Long ownerId;
 }

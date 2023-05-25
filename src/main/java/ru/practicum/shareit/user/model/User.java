@@ -5,18 +5,13 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Data
 @Builder
 public class User {
-    @Builder.Default
-    private Long id = 1L;
 
-    @NotNull
+    private Long id;
+
     @NotBlank
     @Email(regexp = "^(.+)@(\\S+)$")
     private String email;

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
@@ -49,7 +48,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public UserDto patchUser(@PathVariable long id, @RequestBody User user) {
+    public UserDto patchUser(@PathVariable long id, @RequestBody UserDto user) {
         log.info("patchUser: id {}, user {} патч начат", id, user);
         UserDto userDto = service.patchUser(id, user);
         log.info("Патч завершен. Результат: {}", userDto);

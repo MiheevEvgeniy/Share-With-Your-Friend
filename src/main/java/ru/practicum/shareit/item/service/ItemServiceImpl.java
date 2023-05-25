@@ -32,13 +32,13 @@ public class ItemServiceImpl implements ItemService {
         return repository.getAllItems()
                 .stream()
                 .filter(itemPredicate)
-                .map(mapper::map)
+                .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public ItemDto getItem(long id) {
-        return mapper.map(repository.getItem(id));
+        return mapper.toDto(repository.getItem(id));
     }
 
     @Override
@@ -54,7 +54,7 @@ public class ItemServiceImpl implements ItemService {
                         (((Predicate<Item>) item -> item.getName().toLowerCase().contains(text.toLowerCase()))
                                 .or(item -> item.getDescription().toLowerCase().contains(text.toLowerCase())))
                                 .and(item -> item.getAvailable()))
-                .map(mapper::map)
+                .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -64,7 +64,7 @@ public class ItemServiceImpl implements ItemService {
             log.error("Пользователь {} не существует", userId);
             throw new OwnerNotFoundException("Владелец предмета не найден");
         }
-        return mapper.map(repository.addItem(item, userId));
+        return mapper.toDto(repository.addItem(mapper.toEntity(item, userId)));
     }
 
     @Override
@@ -82,15 +82,25 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto patchItem(long id, Item item) {
-        if (!isUserExist(userRepository.getUser(item.getOwnerId()))) {
-            log.error("Пользователь {} не существует", item.getOwnerId());
+    public ItemDto patchItem(long id, ItemDto item, long userId) {
+        if (!isUserExist(userRepository.getUser(userId))) {
+            log.error("Пользователь {} не существует", userId);
             throw new OwnerNotFoundException("Владелец предмета не найден");
         }
-        if (repository.getItem(id).getOwnerId().equals(item.getOwnerId())) {
-            return mapper.map(repository.patchItem(id, item));
+        if (repository.getItem(id).getOwnerId().equals(userId)) {
+            Item patch = repository.getItem(id);
+            if (item.getDescription() != null) {
+                patch.setDescription(item.getDescription());
+            }
+            if (item.getName() != null) {
+                patch.setName(item.getName());
+            }
+            if (item.getAvailable() != null) {
+                patch.setAvailable(item.getAvailable());
+            }
+            return mapper.toDto(repository.patchItem(id, patch));
         } else {
-            log.error("Пользователь {} не владелец предмета {}", item.getOwnerId(), id);
+            log.error("Пользователь {} не владелец предмета {}", userId, id);
             throw new OwnerAccessException("Обновлять предмет может только его владелец");
         }
     }
