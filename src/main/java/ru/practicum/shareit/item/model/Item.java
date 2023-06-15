@@ -1,21 +1,42 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.Builder;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import ru.practicum.shareit.user.model.User;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 
-@Data
-@Builder
+@Entity
+@Table(name = "items", schema = "public")
+@Getter
+@Setter
+@ToString
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Item {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank
+    @Column(nullable = false)
     private String name;
-    @NotBlank
+    @Column(nullable = false)
     private String description;
-    @NotNull
+    @Column(nullable = false)
     private Boolean available;
-    @NotNull
-    private Long ownerId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Item)) return false;
+        return id != null && id.equals(((Item) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

@@ -15,10 +15,13 @@ public class UserMapper {
     }
 
     public User toEntity(UserDto userDto) {
-        return User.builder()
-                .id(userDto.getId())
-                .email(userDto.getEmail())
-                .name(userDto.getName())
-                .build();
+        if (userDto != null) {
+            User user = new User();
+            user.setId(userDto.getId());
+            user.setEmail(userDto.getEmail());
+            user.setName(userDto.getName());
+            return user;
+        }
+        return null;
     }
 }
