@@ -2,8 +2,8 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.comments.model.Comment;
+import ru.practicum.shareit.booking.dto.ItemResponseBookingDto;
+import ru.practicum.shareit.item.comments.dto.CommentDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -22,11 +22,10 @@ public class ItemDto {
     @NotNull
     private Boolean available;
 
-    private Booking lastBooking;
-    private Booking nextBooking;
+    private ItemResponseBookingDto lastBooking;
+    private ItemResponseBookingDto nextBooking;
     @Builder.Default
-
-    private List<Comment> comments = new ArrayList<>();
+    private List<CommentDto> comments = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

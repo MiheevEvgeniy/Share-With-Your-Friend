@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.shareit.enums.BookingStatus;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,10 +19,13 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne
+    @JoinColumn(name = "booker_id")
+    private User booker;
 
-    private Long bookerId;
-
-    private Long itemId;
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    private Item item;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BookingStatus status;

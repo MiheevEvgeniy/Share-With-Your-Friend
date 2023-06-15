@@ -32,8 +32,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingOutputDto addBooking(long bookerId, BookingInputDto bookingInputDto) {
-        bookingInputDto.setBookerId(bookerId);
-        bookingInputDto.setStatus(BookingStatus.WAITING);
         Optional<Item> item = itemRepository.findById(bookingInputDto.getItemId());
         Optional<User> user = userRepository.findById(bookerId);
         if (item.isEmpty()) {
@@ -42,7 +40,7 @@ public class BookingServiceImpl implements BookingService {
         if (user.isEmpty()) {
             throw new OwnerNotFoundException("Пользователь не найден");
         }
-        if (item.get().getOwnerId() == bookerId) {
+        if (item.get().getOwner().getId() == bookerId) {
             throw new OwnerNotFoundException("Пользователь не может арендовать свой же item");
         }
         if (!item.get().getAvailable()) {
@@ -52,17 +50,20 @@ public class BookingServiceImpl implements BookingService {
         if (bookingInputDto.getEnd().isBefore(bookingInputDto.getStart()) || bookingInputDto.getStart().isEqual(bookingInputDto.getEnd())) {
             throw new InvalidBookingDurationException("Недопустимая длительность аренды");
         }
-
-        return mapper.toOutputDtoFromEntity(repository.save(mapper.toEntityFromInputDto(bookingInputDto)));
+        BookingOutputDto bookingOutputDto = mapper.toOutputDtoFromEntity(repository.save(mapper.toEntityFromInputDto(bookingInputDto,
+                item.get(),
+                user.get(),
+                BookingStatus.WAITING)));
+        bookingOutputDto.setStatus(BookingStatus.WAITING);
+        bookingOutputDto.setBooker(user.get());
+        return bookingOutputDto;
     }
 
     @Override
     public BookingOutputDto approveBooking(long ownerId, Boolean approved, Long bookingId) {
         Booking booking = repository.getById(bookingId);
-        BookingOutputDto bookingOutputDto = mapper.toOutputDtoFromEntity(booking);
-        Long itemOwnerId = bookingOutputDto.getItem().getOwnerId();
-        log.info("patch id владельца предмета: {}, id пользователя {}", booking.getBookerId(), ownerId);
-        if (itemOwnerId != ownerId) {
+        log.info("patch id владельца предмета: {}, id пользователя {}", booking.getBooker().getId(), ownerId);
+        if (booking.getItem().getOwner().getId() != ownerId) {
             throw new OwnerNotFoundException("Пользователь не владелец вещи");
         }
         if (booking.getStatus() == BookingStatus.APPROVED && approved) {
@@ -73,6 +74,7 @@ public class BookingServiceImpl implements BookingService {
         } else {
             booking.setStatus(BookingStatus.REJECTED);
         }
+        BookingOutputDto bookingOutputDto = mapper.toOutputDtoFromEntity(booking);
         bookingOutputDto.setStatus(booking.getStatus());
         repository.save(booking);
         return bookingOutputDto;
@@ -81,14 +83,12 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingOutputDto getBookingById(long bookerId, Long bookingId) {
         Booking booking = repository.getReferenceById(bookingId);
-        BookingOutputDto bookingOutputDto = mapper.toOutputDtoFromEntity(booking);
-        Long itemOwnerId = bookingOutputDto.getItem().getOwnerId();
-        log.info("id владельца предмета: {}, id пользователя {}", booking.getBookerId(), bookerId);
+        log.info("id владельца предмета: {}, id пользователя {}", booking.getBooker().getId(), bookerId);
         Optional<User> user = userRepository.findById(bookerId);
-        if (user.isEmpty() || (booking.getBookerId() != bookerId && itemOwnerId != bookerId)) {
+        if (user.isEmpty() || (booking.getBooker().getId() != bookerId && booking.getItem().getOwner().getId() != bookerId)) {
             throw new OwnerNotFoundException("Пользователь не найден или не является автором бронирования или владельцем вещи");
         }
-        return bookingOutputDto;
+        return mapper.toOutputDtoFromEntity(booking);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingOutputDto> getAllBookingsByOwnerAndState(long bookerId, BookingStatus state) {
         return getAllBookingsByState(bookerId, state)
                 .stream()
-                .filter(booking -> booking.getItem().getOwnerId() == bookerId)
+                .filter(booking -> booking.getItem().getOwner().getId() == bookerId)
                 .collect(Collectors.toList());
     }
 

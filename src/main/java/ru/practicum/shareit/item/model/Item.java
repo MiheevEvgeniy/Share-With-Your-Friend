@@ -1,8 +1,10 @@
 package ru.practicum.shareit.item.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 
@@ -11,6 +13,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +24,9 @@ public class Item {
     private String description;
     @Column(nullable = false)
     private Boolean available;
-    @Column(name = "owner_id", nullable = false)
-    private Long ownerId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
 
     @Override
     public boolean equals(Object o) {
