@@ -397,7 +397,7 @@ public class BookingServiceTest {
         when(mapper.toEntityFromInputDto(any(), any(), any(), any())).thenReturn(booking);
         when(repository.save(any())).thenReturn(booking);
         BookingInputDto bookingInputDto = BookingInputDto.builder()
-                .start(LocalDateTime.now())
+                .start(LocalDateTime.MAX)
                 .end(LocalDateTime.now())
                 .itemId(item.getId())
                 .build();
