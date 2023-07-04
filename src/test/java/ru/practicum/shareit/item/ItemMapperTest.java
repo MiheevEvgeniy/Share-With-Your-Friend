@@ -27,7 +27,7 @@ public class ItemMapperTest {
     @InjectMocks
     private ItemMapper mapper;
 
-    private final ItemDto ITEM_DTO = ItemDto.builder()
+    private final ItemDto itemDto = ItemDto.builder()
             .id(1L)
             .name("item1")
             .description("description1")
@@ -36,7 +36,7 @@ public class ItemMapperTest {
             .build();
     private static Item item = new Item();
     private static User user = new User();
-    private final ItemDtoForRequest ITEM_DTO_FOR_REQUEST = ItemDtoForRequest.builder()
+    private final ItemDtoForRequest itemDtoForRequest = ItemDtoForRequest.builder()
             .id(1L)
             .name("item1")
             .description("description1")
@@ -76,13 +76,13 @@ public class ItemMapperTest {
 
         ItemDto actualDto = mapper.toDto(item, user.getId(), booking, booking, null);
 
-        assertEquals(ITEM_DTO, actualDto);
+        assertEquals(itemDto, actualDto);
     }
 
     @Test
     void toEntity_whenInvoked_thenItemDtoCastedToItem() {
 
-        Item actualItem = mapper.toEntity(ITEM_DTO, user, null);
+        Item actualItem = mapper.toEntity(itemDto, user, null);
 
         assertEquals(item, actualItem);
     }
@@ -98,6 +98,6 @@ public class ItemMapperTest {
     void toDtoForRequest_whenInvoked_thenItemCastedToItemForRequest() {
         ItemDtoForRequest actualDto = mapper.toDtoForRequest(item);
 
-        assertEquals(ITEM_DTO_FOR_REQUEST, actualDto);
+        assertEquals(itemDtoForRequest, actualDto);
     }
 }

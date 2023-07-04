@@ -35,7 +35,7 @@ public class BookingControllerTest {
     private MockMvc mvc;
     @MockBean
     private BookingService service;
-    private final BookingOutputDto BOOKING_DTO = BookingOutputDto.builder()
+    private final BookingOutputDto bookingDto = BookingOutputDto.builder()
             .id(1L)
             .booker(new User())
             .item(new Item())
@@ -43,7 +43,7 @@ public class BookingControllerTest {
             .start(LocalDateTime.now())
             .end(LocalDateTime.now())
             .build();
-    private final BookingInputDto BOOKING_INPUT_DTO = BookingInputDto.builder()
+    private final BookingInputDto bookingInputDto = BookingInputDto.builder()
             .itemId(0L)
             .start(LocalDateTime.MAX)
             .end(LocalDateTime.MAX)
@@ -53,11 +53,11 @@ public class BookingControllerTest {
     @Test
     @SneakyThrows
     void addBooking_whenInvoked_savedBooking() {
-        when(service.addBooking(0L, BOOKING_INPUT_DTO))
-                .thenReturn(BOOKING_DTO);
+        when(service.addBooking(0L, bookingInputDto))
+                .thenReturn(bookingDto);
 
         String response = mvc.perform(post("/bookings", anyLong())
-                        .content(mapper.writeValueAsString(BOOKING_INPUT_DTO))
+                        .content(mapper.writeValueAsString(bookingInputDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .header("X-Sharer-User-Id", anyLong())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -67,14 +67,14 @@ public class BookingControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        verify(service).addBooking(0L, BOOKING_INPUT_DTO);
-        assertEquals(mapper.writeValueAsString(BOOKING_DTO), response);
+        verify(service).addBooking(0L, bookingInputDto);
+        assertEquals(mapper.writeValueAsString(bookingDto), response);
     }
 
     @Test
     @SneakyThrows
     void getAllBookingByBooker_whenInvoked_thenReturnedBookerList() {
-        List<BookingOutputDto> expectedBookingDtoList = Arrays.asList(BOOKING_DTO, BOOKING_DTO, BOOKING_DTO);
+        List<BookingOutputDto> expectedBookingDtoList = Arrays.asList(bookingDto, bookingDto, bookingDto);
         when(service.getAllBookingsByBookerAndState(anyLong(), any(), anyInt(), anyInt()))
                 .thenReturn(expectedBookingDtoList);
 
@@ -95,7 +95,7 @@ public class BookingControllerTest {
     @Test
     @SneakyThrows
     void getAllBookingByOwner_whenInvoked_thenReturnedBookerList() {
-        List<BookingOutputDto> expectedBookingDtoList = Arrays.asList(BOOKING_DTO, BOOKING_DTO, BOOKING_DTO);
+        List<BookingOutputDto> expectedBookingDtoList = Arrays.asList(bookingDto, bookingDto, bookingDto);
         when(service.getAllBookingsByOwnerAndState(anyLong(), any(), anyInt(), anyInt()))
                 .thenReturn(expectedBookingDtoList);
 
@@ -117,7 +117,7 @@ public class BookingControllerTest {
     @SneakyThrows
     void getBooking_whenInvoked_thenReturnedBooking() {
         when(service.getBookingById(anyLong(), anyLong()))
-                .thenReturn(BOOKING_DTO);
+                .thenReturn(bookingDto);
 
         String response = mvc.perform(get("/bookings/{bookingId}", anyLong())
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -129,14 +129,14 @@ public class BookingControllerTest {
                 .getResponse()
                 .getContentAsString();
         verify(service).getBookingById(anyLong(), anyLong());
-        assertEquals(mapper.writeValueAsString(BOOKING_DTO), response);
+        assertEquals(mapper.writeValueAsString(bookingDto), response);
     }
 
     @Test
     @SneakyThrows
     void approveBooking_whenInvoked_thenApproveBooking() {
         when(service.approveBooking(anyLong(), anyBoolean(), anyLong()))
-                .thenReturn(BOOKING_DTO);
+                .thenReturn(bookingDto);
 
         String response = mvc.perform(patch("/bookings/{bookingId}", anyLong(), anyBoolean())
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -149,6 +149,6 @@ public class BookingControllerTest {
                 .getResponse()
                 .getContentAsString();
         verify(service).approveBooking(anyLong(), anyBoolean(), anyLong());
-        assertEquals(mapper.writeValueAsString(BOOKING_DTO), response);
+        assertEquals(mapper.writeValueAsString(bookingDto), response);
     }
 }

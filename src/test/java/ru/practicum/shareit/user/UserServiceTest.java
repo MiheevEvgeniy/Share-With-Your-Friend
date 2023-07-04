@@ -32,7 +32,7 @@ public class UserServiceTest {
     @InjectMocks
     private UserServiceImpl service;
 
-    private final UserDto USER_DTO = UserDto.builder()
+    private final UserDto userDto = UserDto.builder()
             .id(1L)
             .name("Sam")
             .email("sam@gmail.com")
@@ -82,13 +82,13 @@ public class UserServiceTest {
         user.setName("Sam");
         user.setEmail("sam@gmail.com");
         when(repository.save(user)).thenReturn(user);
-        when(mapper.toEntity(USER_DTO)).thenReturn(user);
-        when(mapper.toDto(user)).thenReturn(USER_DTO);
+        when(mapper.toEntity(userDto)).thenReturn(user);
+        when(mapper.toDto(user)).thenReturn(userDto);
 
-        UserDto actualUser = service.addUser(USER_DTO);
+        UserDto actualUser = service.addUser(userDto);
 
         verify(repository).save(user);
-        assertEquals(USER_DTO, actualUser);
+        assertEquals(userDto, actualUser);
     }
 
     @Test
@@ -112,12 +112,12 @@ public class UserServiceTest {
         user.setEmail("sam@gmail.com");
         when(repository.save(user)).thenReturn(user);
         when(repository.getById(userId)).thenReturn(user);
-        when(mapper.toDto(user)).thenReturn(USER_DTO);
+        when(mapper.toDto(user)).thenReturn(userDto);
 
-        UserDto actualUser = service.patchUser(userId, USER_DTO);
+        UserDto actualUser = service.patchUser(userId, userDto);
 
         verify(repository).getById(userId);
         verify(repository).save(user);
-        assertEquals(USER_DTO, actualUser);
+        assertEquals(userDto, actualUser);
     }
 }

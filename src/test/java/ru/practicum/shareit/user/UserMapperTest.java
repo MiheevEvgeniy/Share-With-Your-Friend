@@ -19,7 +19,7 @@ public class UserMapperTest {
     @InjectMocks
     private UserMapper mapper;
 
-    private final UserDto USER_DTO = UserDto.builder()
+    private final UserDto userDto = UserDto.builder()
             .id(1L)
             .name("Sam")
             .email("sam@gmail.com")
@@ -35,7 +35,7 @@ public class UserMapperTest {
 
         UserDto actualDto = mapper.toDto(user);
 
-        assertEquals(USER_DTO, actualDto);
+        assertEquals(userDto, actualDto);
     }
 
     @Test
@@ -46,7 +46,7 @@ public class UserMapperTest {
         user.setName("Sam");
         user.setEmail("sam@gmail.com");
 
-        User actualUser = mapper.toEntity(USER_DTO);
+        User actualUser = mapper.toEntity(userDto);
 
         assertEquals(user, actualUser);
     }

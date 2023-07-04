@@ -28,7 +28,7 @@ public class CommentMapperTest {
     private static User user = new User();
     private static Comment comment = new Comment();
 
-    private final CommentDto COMMENT_DTO = CommentDto.builder()
+    private final CommentDto commentDto = CommentDto.builder()
             .id(1L)
             .text("comment text")
             .created(LocalDateTime.now())
@@ -63,13 +63,13 @@ public class CommentMapperTest {
 
         CommentDto actualDto = mapper.toDto(comment);
 
-        assertEquals(COMMENT_DTO, actualDto);
+        assertEquals(commentDto, actualDto);
     }
 
     @Test
     void toEntity_whenInvoked_thenCommentDtoCastedToComment() {
 
-        Comment actualComment = mapper.toEntity(COMMENT_DTO, user, item);
+        Comment actualComment = mapper.toEntity(commentDto, user, item);
 
         assertEquals(comment, actualComment);
     }

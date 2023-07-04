@@ -56,7 +56,7 @@ public class ItemServiceTest {
     @InjectMocks
     private ItemServiceImpl service;
 
-    private final ItemDto ITEM_DTO = ItemDto.builder()
+    private final ItemDto itemDto = ItemDto.builder()
             .id(1L)
             .name("item1")
             .description("description1")
@@ -88,8 +88,8 @@ public class ItemServiceTest {
 
         List<Item> itemList = List.of(item, item, item);
         when(repository.findAll()).thenReturn(itemList);
-        when(mapper.toDto(any(), anyLong(), any(), any(), anyList())).thenReturn(ITEM_DTO);
-        List<ItemDto> expectedList = List.of(ITEM_DTO, ITEM_DTO, ITEM_DTO);
+        when(mapper.toDto(any(), anyLong(), any(), any(), anyList())).thenReturn(itemDto);
+        List<ItemDto> expectedList = List.of(itemDto, itemDto, itemDto);
 
         List<ItemDto> actualList = service.getAllItemsByOwner(user.getId());
 
@@ -100,8 +100,8 @@ public class ItemServiceTest {
     @Test
     void getItem_whenInvoked_thenItemReturned() {
         when(repository.getById(item.getId())).thenReturn(item);
-        when(mapper.toDto(any(), anyLong(), any(), any(), anyList())).thenReturn(ITEM_DTO);
-        ItemDto expectedItem = ITEM_DTO;
+        when(mapper.toDto(any(), anyLong(), any(), any(), anyList())).thenReturn(itemDto);
+        ItemDto expectedItem = itemDto;
 
         ItemDto actualItem = service.getItem(user.getId(), item.getId());
 
@@ -113,9 +113,9 @@ public class ItemServiceTest {
     void searchItem_whenInvoked_thenResultReturned() {
         List<Item> list = List.of(item, item, item);
         when(repository.findAll()).thenReturn(list);
-        when(mapper.toDto(any(), anyLong(), any(), any(), anyList())).thenReturn(ITEM_DTO);
+        when(mapper.toDto(any(), anyLong(), any(), any(), anyList())).thenReturn(itemDto);
 
-        List<ItemDto> expectedList = List.of(ITEM_DTO, ITEM_DTO, ITEM_DTO);
+        List<ItemDto> expectedList = List.of(itemDto, itemDto, itemDto);
         List<ItemDto> actualList = service.searchItem("item");
 
         verify(repository).findAll();
@@ -133,12 +133,12 @@ public class ItemServiceTest {
     @Test
     void addItem_whenInvoked_thenItemSaved() {
         when(repository.save(item)).thenReturn(item);
-        when(mapper.toDto(any(), anyLong(), any(), any(), anyList())).thenReturn(ITEM_DTO);
+        when(mapper.toDto(any(), anyLong(), any(), any(), anyList())).thenReturn(itemDto);
         when(mapper.toEntity(any(), any(), any())).thenReturn(item);
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        ItemDto expectedItem = ITEM_DTO;
+        ItemDto expectedItem = itemDto;
 
-        ItemDto actualItem = service.addItem(ITEM_DTO, user.getId());
+        ItemDto actualItem = service.addItem(itemDto, user.getId());
 
         verify(repository).save(item);
         assertEquals(expectedItem, actualItem);
@@ -167,14 +167,14 @@ public class ItemServiceTest {
     @Test
     void patchItem_whenInvoked_thenItemPatched() {
         when(repository.getById(item.getId())).thenReturn(item);
-        when(mapper.toDto(any(), anyLong(), any(), any(), anyList())).thenReturn(ITEM_DTO);
+        when(mapper.toDto(any(), anyLong(), any(), any(), anyList())).thenReturn(itemDto);
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
-        ItemDto actualItem = service.patchItem(item.getId(), ITEM_DTO, user.getId());
+        ItemDto actualItem = service.patchItem(item.getId(), itemDto, user.getId());
 
         verify(repository, times(2)).getById(user.getId());
         verify(repository).save(item);
-        assertEquals(ITEM_DTO, actualItem);
+        assertEquals(itemDto, actualItem);
     }
 
     @Test
@@ -183,7 +183,7 @@ public class ItemServiceTest {
         when(repository.getById(item.getId())).thenReturn(item);
         when(userRepository.findById(wrongOwnerId)).thenReturn(Optional.of(user));
 
-        OwnerAccessException exception = assertThrows(OwnerAccessException.class, () -> service.patchItem(item.getId(), ITEM_DTO, wrongOwnerId));
+        OwnerAccessException exception = assertThrows(OwnerAccessException.class, () -> service.patchItem(item.getId(), itemDto, wrongOwnerId));
         verify(repository).getById(user.getId());
         verify(repository, never()).save(item);
     }
@@ -214,7 +214,7 @@ public class ItemServiceTest {
         booking.setId(bookingId);
 
         when(repository.save(item)).thenReturn(item);
-        when(mapper.toDto(any(), anyLong(), any(), any(), anyList())).thenReturn(ITEM_DTO);
+        when(mapper.toDto(any(), anyLong(), any(), any(), anyList())).thenReturn(itemDto);
         when(mapper.toEntity(any(), any(), any())).thenReturn(item);
         when(commentMapper.toDto(any())).thenReturn(commentDto);
         when(commentMapper.toEntity(any(), any(), any())).thenReturn(comment);
