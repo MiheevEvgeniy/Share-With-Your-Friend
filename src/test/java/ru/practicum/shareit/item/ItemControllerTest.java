@@ -32,13 +32,13 @@ public class ItemControllerTest {
     private MockMvc mvc;
     @MockBean
     private ItemService service;
-    private final ItemDto ITEM_DTO = ItemDto.builder()
+    private final ItemDto itemDto = ItemDto.builder()
             .id(1L)
             .name("Item")
             .description("Description")
             .available(true)
             .build();
-    private final CommentDto COMMENT_DTO = CommentDto.builder()
+    private final CommentDto commentDto = CommentDto.builder()
             .id(1L)
             .authorName("Max")
             .created(LocalDateTime.now())
@@ -49,10 +49,10 @@ public class ItemControllerTest {
     @SneakyThrows
     void addItem_whenInvoked_savedItem() {
         when(service.addItem(any(), anyLong()))
-                .thenReturn(ITEM_DTO);
+                .thenReturn(itemDto);
 
         String response = mvc.perform(post("/items", anyLong())
-                        .content(mapper.writeValueAsString(ITEM_DTO))
+                        .content(mapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .header("X-Sharer-User-Id", anyLong())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -63,13 +63,13 @@ public class ItemControllerTest {
                 .getContentAsString();
 
         verify(service).addItem(any(), anyLong());
-        assertEquals(mapper.writeValueAsString(ITEM_DTO), response);
+        assertEquals(mapper.writeValueAsString(itemDto), response);
     }
 
     @Test
     @SneakyThrows
     void getAllItemsByOwner_whenInvoked_thenReturnedItemList() {
-        List<ItemDto> expectedItemDtoList = Arrays.asList(ITEM_DTO, ITEM_DTO, ITEM_DTO);
+        List<ItemDto> expectedItemDtoList = Arrays.asList(itemDto, itemDto, itemDto);
         when(service.getAllItemsByOwner(anyLong()))
                 .thenReturn(expectedItemDtoList);
 
@@ -91,7 +91,7 @@ public class ItemControllerTest {
     @SneakyThrows
     void getItem_whenInvoked_thenReturnedItem() {
         when(service.getItem(anyLong(), anyLong()))
-                .thenReturn(ITEM_DTO);
+                .thenReturn(itemDto);
 
         String response = mvc.perform(get("/items/{itemId}", anyLong())
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -103,7 +103,7 @@ public class ItemControllerTest {
                 .getResponse()
                 .getContentAsString();
         verify(service).getItem(anyLong(), anyLong());
-        assertEquals(mapper.writeValueAsString(ITEM_DTO), response);
+        assertEquals(mapper.writeValueAsString(itemDto), response);
     }
 
     @Test
@@ -123,11 +123,10 @@ public class ItemControllerTest {
     @SneakyThrows
     void patchItem_whenInvoked_patchedItem() {
         when(service.patchItem(anyLong(), any(), anyLong()))
-                .thenReturn(ITEM_DTO);
+                .thenReturn(itemDto);
 
-        String response = mvc.perform(patch("/items/{id}"
-                        , anyLong(), any())
-                        .content(mapper.writeValueAsString(ITEM_DTO))
+        String response = mvc.perform(patch("/items/{id}", anyLong(), any())
+                        .content(mapper.writeValueAsString(itemDto))
                         .header("X-Sharer-User-Id", anyLong())
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -138,13 +137,13 @@ public class ItemControllerTest {
                 .getContentAsString();
 
         verify(service).patchItem(anyLong(), any(), anyLong());
-        assertEquals(mapper.writeValueAsString(ITEM_DTO), response);
+        assertEquals(mapper.writeValueAsString(itemDto), response);
     }
 
     @Test
     @SneakyThrows
     void searchItem_whenInvoked_thenReturnedSearchResult() {
-        List<ItemDto> expectedItemDtoList = List.of(ITEM_DTO, ITEM_DTO, ITEM_DTO);
+        List<ItemDto> expectedItemDtoList = List.of(itemDto, itemDto, itemDto);
         when(service.searchItem(anyString()))
                 .thenReturn(expectedItemDtoList);
 
@@ -166,10 +165,10 @@ public class ItemControllerTest {
     @SneakyThrows
     void addComment_whenInvoked_thenCommentAdded() {
         when(service.addComment(anyLong(), anyLong(), any()))
-                .thenReturn(COMMENT_DTO);
+                .thenReturn(commentDto);
 
         String response = mvc.perform(post("/items/{itemId}/comment", anyLong(), anyLong())
-                        .content(mapper.writeValueAsString(ITEM_DTO))
+                        .content(mapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .header("X-Sharer-User-Id", anyLong())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -180,6 +179,6 @@ public class ItemControllerTest {
                 .getContentAsString();
 
         verify(service).addComment(anyLong(), anyLong(), any());
-        assertEquals(mapper.writeValueAsString(COMMENT_DTO), response);
+        assertEquals(mapper.writeValueAsString(commentDto), response);
     }
 }

@@ -30,7 +30,7 @@ public class UserControllerTest {
     private MockMvc mvc;
     @MockBean
     private UserService service;
-    private final UserDto USER_DTO = UserDto.builder()
+    private final UserDto userDto = UserDto.builder()
             .id(1L)
             .name("Sam")
             .email("sam@gmail.com")
@@ -40,10 +40,10 @@ public class UserControllerTest {
     @SneakyThrows
     void addUser_whenInvoked_savedUser() {
         when(service.addUser(any()))
-                .thenReturn(USER_DTO);
+                .thenReturn(userDto);
 
         String response = mvc.perform(post("/users")
-                        .content(mapper.writeValueAsString(USER_DTO))
+                        .content(mapper.writeValueAsString(userDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -53,7 +53,7 @@ public class UserControllerTest {
                 .getContentAsString();
 
         verify(service).addUser(any());
-        assertEquals(mapper.writeValueAsString(USER_DTO), response);
+        assertEquals(mapper.writeValueAsString(userDto), response);
     }
 
     @Test
@@ -64,7 +64,7 @@ public class UserControllerTest {
                 .email(null)
                 .build();
         when(service.addUser(userInputDto))
-                .thenReturn(USER_DTO);
+                .thenReturn(userDto);
 
         mvc.perform(post("/users")
                         .content(mapper.writeValueAsString(userInputDto))
@@ -79,7 +79,7 @@ public class UserControllerTest {
     @Test
     @SneakyThrows
     void getAllUsers_whenInvoked_thenReturnedUserList() {
-        List<UserDto> expectedUserDtoList = Arrays.asList(USER_DTO, USER_DTO, USER_DTO);
+        List<UserDto> expectedUserDtoList = Arrays.asList(userDto, userDto, userDto);
         when(service.getAllUsers())
                 .thenReturn(expectedUserDtoList);
 
@@ -101,10 +101,10 @@ public class UserControllerTest {
     @SneakyThrows
     void getUser_whenInvoked_thenReturnedUser() {
         when(service.getUser(anyLong()))
-                .thenReturn(USER_DTO);
+                .thenReturn(userDto);
 
         String response = mvc.perform(get("/users/{userId}", anyLong())
-                        .content(mapper.writeValueAsString(USER_DTO))
+                        .content(mapper.writeValueAsString(userDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -113,14 +113,14 @@ public class UserControllerTest {
                 .getResponse()
                 .getContentAsString();
         verify(service).getUser(anyLong());
-        assertEquals(mapper.writeValueAsString(USER_DTO), response);
+        assertEquals(mapper.writeValueAsString(userDto), response);
     }
 
     @Test
     @SneakyThrows
     void deleteUser_whenInvoked_deletedUser() {
         mvc.perform(delete("/users/{userId}", anyLong())
-                        .content(mapper.writeValueAsString(USER_DTO))
+                        .content(mapper.writeValueAsString(userDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -133,10 +133,10 @@ public class UserControllerTest {
     @SneakyThrows
     void patchUser_whenInvoked_patchedUser() {
         when(service.patchUser(anyLong(), any()))
-                .thenReturn(USER_DTO);
+                .thenReturn(userDto);
 
         String response = mvc.perform(patch("/users/{userId}", anyLong(), any())
-                        .content(mapper.writeValueAsString(USER_DTO))
+                        .content(mapper.writeValueAsString(userDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -146,6 +146,6 @@ public class UserControllerTest {
                 .getContentAsString();
 
         verify(service).patchUser(anyLong(), any());
-        assertEquals(mapper.writeValueAsString(USER_DTO), response);
+        assertEquals(mapper.writeValueAsString(userDto), response);
     }
 }

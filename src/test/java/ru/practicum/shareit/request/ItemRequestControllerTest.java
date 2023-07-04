@@ -33,7 +33,7 @@ public class ItemRequestControllerTest {
     private MockMvc mvc;
     @MockBean
     private ItemRequestService service;
-    private final ItemRequestDto REQUEST_DTO = ItemRequestDto.builder()
+    private final ItemRequestDto requestDto = ItemRequestDto.builder()
             .id(1L)
             .description("description")
             .created(LocalDateTime.now())
@@ -44,10 +44,10 @@ public class ItemRequestControllerTest {
     @SneakyThrows
     void addRequest_whenInvoked_savedRequest() {
         when(service.addRequest(any(), anyLong()))
-                .thenReturn(REQUEST_DTO);
+                .thenReturn(requestDto);
 
         String response = mvc.perform(post("/requests", anyLong())
-                        .content(mapper.writeValueAsString(REQUEST_DTO))
+                        .content(mapper.writeValueAsString(requestDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .header("X-Sharer-User-Id", anyLong())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -58,13 +58,13 @@ public class ItemRequestControllerTest {
                 .getContentAsString();
 
         verify(service).addRequest(any(), anyLong());
-        assertEquals(mapper.writeValueAsString(REQUEST_DTO), response);
+        assertEquals(mapper.writeValueAsString(requestDto), response);
     }
 
     @Test
     @SneakyThrows
     void getAllRequests_whenInvoked_thenReturnedRequestList() {
-        List<ItemRequestDto> expectedRequestDtoList = Arrays.asList(REQUEST_DTO, REQUEST_DTO, REQUEST_DTO);
+        List<ItemRequestDto> expectedRequestDtoList = Arrays.asList(requestDto, requestDto, requestDto);
         when(service.getAllRequests(anyLong()))
                 .thenReturn(expectedRequestDtoList);
 
@@ -85,7 +85,7 @@ public class ItemRequestControllerTest {
     @Test
     @SneakyThrows
     void getAllRequestsPageable_whenInvoked_thenReturnedPageableRequestList() {
-        List<ItemRequestDto> expectedRequestDtoList = Arrays.asList(REQUEST_DTO, REQUEST_DTO, REQUEST_DTO);
+        List<ItemRequestDto> expectedRequestDtoList = Arrays.asList(requestDto, requestDto, requestDto);
         when(service.getAllRequestsPageable(anyLong(), anyInt(), anyInt()))
                 .thenReturn(expectedRequestDtoList);
 
@@ -107,7 +107,7 @@ public class ItemRequestControllerTest {
     @SneakyThrows
     void getRequest_whenInvoked_thenReturnedRequest() {
         when(service.getRequest(anyLong(), anyLong()))
-                .thenReturn(REQUEST_DTO);
+                .thenReturn(requestDto);
 
         String response = mvc.perform(get("/requests/{requestId}", anyLong())
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -119,7 +119,7 @@ public class ItemRequestControllerTest {
                 .getResponse()
                 .getContentAsString();
         verify(service).getRequest(anyLong(), anyLong());
-        assertEquals(mapper.writeValueAsString(REQUEST_DTO), response);
+        assertEquals(mapper.writeValueAsString(requestDto), response);
     }
 
 }
