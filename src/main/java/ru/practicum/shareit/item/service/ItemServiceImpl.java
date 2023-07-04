@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.enums.BookingStatus;
-import ru.practicum.shareit.exception.InvalidCommentException;
+import ru.practicum.shareit.exception.InvalidDataException;
 import ru.practicum.shareit.exception.OwnerAccessException;
 import ru.practicum.shareit.exception.OwnerNotFoundException;
 import ru.practicum.shareit.exception.UnavailableItemException;
@@ -175,7 +175,7 @@ public class ItemServiceImpl implements ItemService {
             throw new UnavailableItemException("Предмет не найден или на него не было бронирования от указанного пользователя");
         }
         if (commentDto.getText().isEmpty()) {
-            throw new InvalidCommentException("Текст комментария отсутствует");
+            throw new InvalidDataException("Текст комментария отсутствует");
         }
         return commentMapper.toDto(commentRepository.save(commentMapper.toEntity(commentDto, user, item)));
     }

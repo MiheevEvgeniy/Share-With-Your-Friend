@@ -18,8 +18,7 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage(), e.getStackTrace());
     }
 
-    @ExceptionHandler({WrongOwnerException.class, InvalidEmailException.class, UnavailableItemException.class,
-            InvalidBookingDurationException.class, InvalidCommentException.class})
+    @ExceptionHandler({InvalidDataException.class, UnavailableItemException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(final Exception e) {
         return new ErrorResponse(e.getMessage(), e.getStackTrace());
@@ -34,12 +33,6 @@ public class ErrorHandler {
     @ExceptionHandler({OwnerAccessException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleForbiddenException(final Exception e) {
-        return new ErrorResponse(e.getMessage(), e.getStackTrace());
-    }
-
-    @ExceptionHandler({EmailConflictException.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleEmailConflict(final Exception e) {
         return new ErrorResponse(e.getMessage(), e.getStackTrace());
     }
 

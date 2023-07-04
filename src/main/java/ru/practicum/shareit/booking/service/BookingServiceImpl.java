@@ -50,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
             throw new UnavailableItemException("item должен быть доступен для бронирования");
         }
         if (bookingInputDto.getEnd().isBefore(bookingInputDto.getStart()) || bookingInputDto.getStart().isEqual(bookingInputDto.getEnd())) {
-            throw new InvalidBookingDurationException("Недопустимая длительность аренды");
+            throw new InvalidDataException("Недопустимая длительность аренды");
         }
         BookingOutputDto bookingOutputDto = mapper.toOutputDtoFromEntity(repository.save(mapper.toEntityFromInputDto(bookingInputDto,
                 item.get(),

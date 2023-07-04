@@ -402,7 +402,7 @@ public class BookingServiceTest {
                 .itemId(item.getId())
                 .build();
 
-        InvalidBookingDurationException exception = assertThrows(InvalidBookingDurationException.class,
+        InvalidDataException exception = assertThrows(InvalidDataException.class,
                 () -> service.addBooking(100L, bookingInputDto));
         verify(repository, never()).save(any());
         assertEquals("Недопустимая длительность аренды", exception.getMessage());
