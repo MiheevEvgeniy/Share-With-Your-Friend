@@ -124,12 +124,12 @@ public class ItemRequestServiceTest {
         when(mapper.toDto(any())).thenReturn(itemRequestDto);
         when(itemRepository.findAllByRequestId(anyLong())).thenReturn(List.of(item, item));
         when(itemMapper.toDtoForRequest(any())).thenReturn(itemDtoForRequest);
-        when(repository.findAll(user, PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "id")))).thenReturn(requestList);
+        when(repository.findByRequester_IdNot(user.getId(), PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "id")))).thenReturn(requestList);
         List<ItemRequestDto> expectedList = List.of(itemRequestDto, itemRequestDto);
 
         List<ItemRequestDto> actualList = service.getAllRequestsPageable(user.getId(), 0, 2);
 
-        verify(repository).findAll(user, PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "id")));
+        verify(repository).findByRequester_IdNot(user.getId(), PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "id")));
         assertEquals(expectedList, actualList);
     }
 

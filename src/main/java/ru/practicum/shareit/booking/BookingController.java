@@ -44,25 +44,16 @@ public class BookingController {
     public List<BookingOutputDto> getAllBookingsByBooker(@RequestHeader("X-Sharer-User-Id") long bookerId,
                                                          @RequestParam(required = false, defaultValue = "ALL")
                                                          BookingStatus state,
-                                                         @RequestParam(defaultValue = "0")
-                                                         @Min(0)
-                                                         Integer from,
-                                                         @RequestParam(defaultValue = "10")
-                                                         @Min(1)
-                                                         Integer size) {
+                                                         @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                                         @RequestParam(defaultValue = "10") @Min(1) Integer size) {
         return service.getAllBookingsByBookerAndState(bookerId, state, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingOutputDto> getAllBookingsByOwner(@RequestHeader("X-Sharer-User-Id") long bookerId,
-                                                        @RequestParam(required = false, defaultValue = "ALL")
-                                                        BookingStatus state,
-                                                        @RequestParam(defaultValue = "0")
-                                                        @Min(0)
-                                                        Integer from,
-                                                        @RequestParam(defaultValue = "10")
-                                                        @Min(1)
-                                                        Integer size) {
+                                                        @RequestParam(required = false, defaultValue = "ALL") BookingStatus state,
+                                                        @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                                        @RequestParam(defaultValue = "10") @Min(1) Integer size) {
         return service.getAllBookingsByOwnerAndState(bookerId, state, from, size);
     }
 }

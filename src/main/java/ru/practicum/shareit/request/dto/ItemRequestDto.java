@@ -15,7 +15,8 @@ public class ItemRequestDto {
     private Long id;
     @NotBlank
     private String description;
-    private LocalDateTime created;
+    @Builder.Default
+    private LocalDateTime created = LocalDateTime.now();
     @Builder.Default
     private List<ItemDtoForRequest> items = new ArrayList<>();
 

@@ -18,7 +18,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,7 +34,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequestDto addRequest(ItemRequestDto dto, Long userId) {
-        dto.setCreated(LocalDateTime.now());
         return mapper.toDto(repository.save(mapper.toEntity(dto, checkUserId(userId))));
     }
 
@@ -58,8 +56,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequestDto> getAllRequestsPageable(Long userId, Integer from, Integer size) {
         Sort sortById = Sort.by(Sort.Direction.ASC, "id");
         Pageable page = PageRequest.of(from, size, sortById);
-
-        List<ItemRequestDto> itemRequestDtos = repository.findAll(checkUserId(userId), page).stream().map(mapper::toDto).collect(Collectors.toList());
+        checkUserId(userId);
+        List<ItemRequestDto> itemRequestDtos = repository.findByRequester_IdNot(userId, page).stream().map(mapper::toDto).collect(Collectors.toList());
         itemRequestDtos.forEach(itemRequestDto -> itemRequestDto
                 .setItems(itemRepository.findAllByRequestId(
                                 itemRequestDto.getId())

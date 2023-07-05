@@ -37,12 +37,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestDto> getAllRequestsPageable(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                       @RequestParam(defaultValue = "0")
-                                                       @Min(0)
-                                                       Integer from,
-                                                       @RequestParam(defaultValue = "10")
-                                                       @Min(1)
-                                                       Integer size) {
+                                                       @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                                       @RequestParam(defaultValue = "10") @Min(1) Integer size) {
         log.info("getAllRequestsPageable started: userId {}, from {}, size {}", userId, from, size);
         List<ItemRequestDto> itemRequestDtos = service.getAllRequestsPageable(userId, from, size);
         log.info("getAllRequestsPageable finished");

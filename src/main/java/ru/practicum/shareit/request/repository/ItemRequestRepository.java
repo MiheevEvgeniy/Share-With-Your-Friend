@@ -14,6 +14,6 @@ public interface ItemRequestRepository extends JpaRepository<ItemRequest, Long> 
 
     List<ItemRequest> findAllByOwnerOrderByCreatedDesc(User owner);
 
-    @Query("SELECT ir FROM ItemRequest ir WHERE ir.owner != ?1")
-    List<ItemRequest> findAll(User owner, Pageable pageable);
+    @Query("SELECT ir FROM ItemRequest ir WHERE ir.owner.id != ?1")
+    List<ItemRequest> findByRequester_IdNot(Long id, Pageable pageable);
 }
