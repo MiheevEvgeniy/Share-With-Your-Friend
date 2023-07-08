@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.enums.BookingStatus;
-import ru.practicum.shareit.exception.InvalidCommentException;
+import ru.practicum.shareit.exception.InvalidDataException;
 import ru.practicum.shareit.exception.OwnerAccessException;
 import ru.practicum.shareit.exception.OwnerNotFoundException;
 import ru.practicum.shareit.exception.UnavailableItemException;
@@ -17,6 +17,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -36,6 +38,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
     private final ItemMapper mapper;
     private final CommentMapper commentMapper;
 
@@ -101,7 +104,11 @@ public class ItemServiceImpl implements ItemService {
                 .stream()
                 .map(commentMapper::toDto)
                 .collect(Collectors.toList());
-        return mapper.toDto(repository.save(mapper.toEntity(item, checkUserId(userId))), userId, lastBooking, nextBooking, comments);
+        ItemRequest itemRequest = null;
+        if (item.getRequestId() != null) {
+            itemRequest = itemRequestRepository.getById(item.getRequestId());
+        }
+        return mapper.toDto(repository.save(mapper.toEntity(item, checkUserId(userId), itemRequest)), userId, lastBooking, nextBooking, comments);
     }
 
     @Override
@@ -168,7 +175,7 @@ public class ItemServiceImpl implements ItemService {
             throw new UnavailableItemException("Предмет не найден или на него не было бронирования от указанного пользователя");
         }
         if (commentDto.getText().isEmpty()) {
-            throw new InvalidCommentException("Текст комментария отсутствует");
+            throw new InvalidDataException("Текст комментария отсутствует");
         }
         return commentMapper.toDto(commentRepository.save(commentMapper.toEntity(commentDto, user, item)));
     }

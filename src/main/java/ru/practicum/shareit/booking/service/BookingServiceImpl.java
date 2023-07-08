@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingInputDto;
 import ru.practicum.shareit.booking.dto.BookingOutputDto;
@@ -16,6 +17,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -48,7 +50,7 @@ public class BookingServiceImpl implements BookingService {
             throw new UnavailableItemException("item должен быть доступен для бронирования");
         }
         if (bookingInputDto.getEnd().isBefore(bookingInputDto.getStart()) || bookingInputDto.getStart().isEqual(bookingInputDto.getEnd())) {
-            throw new InvalidBookingDurationException("Недопустимая длительность аренды");
+            throw new InvalidDataException("Недопустимая длительность аренды");
         }
         BookingOutputDto bookingOutputDto = mapper.toOutputDtoFromEntity(repository.save(mapper.toEntityFromInputDto(bookingInputDto,
                 item.get(),
@@ -92,19 +94,25 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingOutputDto> getAllBookingsByBookerAndState(long bookerId, BookingStatus state) {
-        return getAllBookingsByState(bookerId, state)
+    public List<BookingOutputDto> getAllBookingsByBookerAndState(long bookerId, BookingStatus state, Integer from, Integer size) {
+        PagedListHolder page = new PagedListHolder(getAllBookingsByState(bookerId, state)
                 .stream()
                 .filter(booking -> booking.getBooker().getId() == bookerId)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+        page.setPageSize(size);
+        page.setPage(from);
+        return new ArrayList<>(page.getPageList());
     }
 
     @Override
-    public List<BookingOutputDto> getAllBookingsByOwnerAndState(long bookerId, BookingStatus state) {
-        return getAllBookingsByState(bookerId, state)
+    public List<BookingOutputDto> getAllBookingsByOwnerAndState(long bookerId, BookingStatus state, Integer from, Integer size) {
+        PagedListHolder page = new PagedListHolder(getAllBookingsByState(bookerId, state)
                 .stream()
                 .filter(booking -> booking.getItem().getOwner().getId() == bookerId)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+        page.setPageSize(size);
+        page.setPage(from);
+        return new ArrayList<>(page.getPageList());
     }
 
     private List<BookingOutputDto> getAllBookingsByState(long bookerId, BookingStatus state) {

@@ -1,4 +1,4 @@
-package ru.practicum.shareit;
+package ru.practicum.shareit.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,14 +11,14 @@ import javax.persistence.EntityNotFoundException;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler({OwnerNotFoundException.class, EntityNotFoundException.class, ItemNotFoundException.class})
+    @ExceptionHandler({OwnerNotFoundException.class, EntityNotFoundException.class, ItemNotFoundException.class,
+            ItemRequestNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(final Exception e) {
         return new ErrorResponse(e.getMessage(), e.getStackTrace());
     }
 
-    @ExceptionHandler({WrongOwnerException.class, InvalidEmailException.class, UnavailableItemException.class,
-            InvalidBookingDurationException.class, InvalidCommentException.class})
+    @ExceptionHandler({InvalidDataException.class, UnavailableItemException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(final Exception e) {
         return new ErrorResponse(e.getMessage(), e.getStackTrace());
@@ -33,12 +33,6 @@ public class ErrorHandler {
     @ExceptionHandler({OwnerAccessException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleForbiddenException(final Exception e) {
-        return new ErrorResponse(e.getMessage(), e.getStackTrace());
-    }
-
-    @ExceptionHandler({EmailConflictException.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleEmailConflict(final Exception e) {
         return new ErrorResponse(e.getMessage(), e.getStackTrace());
     }
 
