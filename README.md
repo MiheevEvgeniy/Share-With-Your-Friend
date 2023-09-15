@@ -12,5 +12,6 @@
     <li>Hibernate</li>
     <li>Docker</li>
     <li>Spring Boot</li>
+    <li>Mockito</li>
     <li>REST API</li>
 </ul>
